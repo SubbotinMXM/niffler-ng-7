@@ -1,21 +1,29 @@
 package guru.qa.niffler.api;
 
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.SpendJson;
 import lombok.SneakyThrows;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class SpendApiClient {
+
+    private final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+
+    private final Config CFG = Config.getInstance();
+
     private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://127.0.0.1:8093/")
+            .client(okHttpClient)
+            .baseUrl(CFG.spendUrl())
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
 
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
     @SneakyThrows
-    public SpendJson createSpend(SpendJson spend) {
-        return spendApi.addSpend(spend)
+    public SpendJson createSpend(SpendJson spendJson){
+        return spendApi.createSpend(spendJson)
                 .execute()
                 .body();
     }
