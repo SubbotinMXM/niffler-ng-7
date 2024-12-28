@@ -1,13 +1,14 @@
-package guru.qa.niffler.jupiter;
+package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.api.SpendApiClient;
+import guru.qa.niffler.jupiter.annotation.Spend;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import org.junit.jupiter.api.extension.*;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.extension.ExtensionContext.*;
+import static org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import static org.junit.platform.commons.support.AnnotationSupport.findAnnotation;
 
 public class SpendExtension implements BeforeEachCallback, ParameterResolver {
