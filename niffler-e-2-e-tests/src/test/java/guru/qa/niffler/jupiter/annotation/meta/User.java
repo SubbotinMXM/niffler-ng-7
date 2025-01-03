@@ -16,6 +16,8 @@ import java.lang.annotation.Target;
 @ExtendWith({SpendingExtension.class, CategoryExtension.class})
 public @interface User {
     String username();
+
     Category[] categories() default {};
+
     Spending[] spendings() default {};
 }

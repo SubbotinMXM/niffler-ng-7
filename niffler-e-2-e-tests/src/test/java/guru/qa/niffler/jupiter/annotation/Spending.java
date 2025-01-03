@@ -14,7 +14,10 @@ import java.lang.annotation.Target;
 @ExtendWith(SpendingExtension.class)
 public @interface Spending {
     String category();
+
     String description();
+
     CurrencyValues currency();
+
     double amount();
 }

@@ -7,11 +7,9 @@ import guru.qa.niffler.model.CategoryJson;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-import java.util.Random;
+import static guru.qa.niffler.util.RandomDataUtils.randomCategoryName;
 
 public class CategoryExtension implements BeforeEachCallback, ParameterResolver, AfterTestExecutionCallback {
-
-    private final Random random = new Random();
 
     private final SpendApiClient spendApiClient = new SpendApiClient();
 
@@ -25,7 +23,7 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
                         Category categoryAnno = userAnno.categories()[0];
                         CategoryJson categoryJson = new CategoryJson(
                                 null,
-                                "Some category " + random.nextInt(1, 1000000),
+                                randomCategoryName(),
                                 userAnno.username(),
                                 false
                         );
@@ -40,7 +38,7 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
                             );
                             createdCategory = spendApiClient.updateCategory(archivedCategory);
                         }
-                        context.getStore(CategoryExtension.NAMESPACE).put(context.getUniqueId(), createdCategory);
+                        context.getStore(NAMESPACE).put(context.getUniqueId(), createdCategory);
                     }
 
                 });
@@ -53,12 +51,12 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(CategoryExtension.NAMESPACE).get(extensionContext.getUniqueId(), CategoryJson.class);
+        return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), CategoryJson.class);
     }
 
     @Override
     public void afterTestExecution(ExtensionContext context) {
-        CategoryJson categoryJson = context.getStore(CategoryExtension.NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
+        CategoryJson categoryJson = context.getStore(NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
 
         if (categoryJson != null){
             CategoryJson archivedCategory = new CategoryJson(
