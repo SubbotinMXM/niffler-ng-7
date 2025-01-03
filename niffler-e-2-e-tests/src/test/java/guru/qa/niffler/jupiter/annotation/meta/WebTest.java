@@ -1,4 +1,4 @@
-package guru.qa.niffler.jupiter.annotation;
+package guru.qa.niffler.jupiter.annotation.meta;
 
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.jupiter.extension.UserQueueExtension;
@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@ExtendWith({UserQueueExtension.class, BrowserExtension.class})
+@ExtendWith({BrowserExtension.class, UserQueueExtension.class})
 public @interface WebTest {
 
 }
