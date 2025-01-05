@@ -1,10 +1,10 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.service.SpendDbClient;
 import org.junit.jupiter.api.extension.*;
 
 import java.util.Date;
@@ -14,7 +14,8 @@ import static org.junit.platform.commons.support.AnnotationSupport.findAnnotatio
 
 public class SpendingExtension implements BeforeEachCallback, ParameterResolver {
 
-    private final SpendApiClient spendApiClient = new SpendApiClient();
+    private final SpendDbClient spendDbClient = new SpendDbClient();
+
 
     public static final Namespace NAMESPACE = Namespace.create(SpendingExtension.class);
 
@@ -24,21 +25,32 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                 .ifPresent(userAnno -> {
                     if (userAnno.spendings().length > 0) {
                         Spending spendingAnno = userAnno.spendings()[0];
+
+                        // Проверяем, существует ли категория
+                        CategoryJson categoryJson = spendDbClient.findCategoryByUsernameAndCategoryName(
+                                        userAnno.username(),
+                                        spendingAnno.category()
+                                ).map(CategoryJson::fromEntity)
+                                .orElseGet(() -> { // Если категории нет, создаем её
+                                    CategoryJson newCategory = new CategoryJson(
+                                            null,
+                                            spendingAnno.category(),
+                                            userAnno.username(),
+                                            false
+                                    );
+                                    return spendDbClient.createCategory(newCategory);
+                                });
+
                         SpendJson spendJson = new SpendJson(
                                 null,
                                 new Date(),
-                                new CategoryJson(
-                                        null,
-                                        spendingAnno.category(),
-                                        userAnno.username(),
-                                        false
-                                ),
+                                categoryJson,
                                 spendingAnno.currency(),
                                 spendingAnno.amount(),
                                 spendingAnno.description(),
                                 userAnno.username()
                         );
-                        SpendJson createdSpend = spendApiClient.createSpend(spendJson);
+                        SpendJson createdSpend = spendDbClient.createSpend(spendJson);
                         context.getStore(NAMESPACE).put(context.getUniqueId(), createdSpend);
                     }
                 });
