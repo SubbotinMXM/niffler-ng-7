@@ -28,18 +28,18 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
 
                         // Проверяем, существует ли категория
                         CategoryJson categoryJson = spendDbClient.findCategoryByUsernameAndCategoryName(
-                                        userAnno.username(),
-                                        spendingAnno.category()
-                                ).map(CategoryJson::fromEntity)
-                                .orElseGet(() -> { // Если категории нет, создаем её
-                                    CategoryJson newCategory = new CategoryJson(
-                                            null,
-                                            spendingAnno.category(),
-                                            userAnno.username(),
-                                            false
-                                    );
-                                    return spendDbClient.createCategory(newCategory);
-                                });
+                                userAnno.username(),
+                                spendingAnno.category()
+                        ).orElseGet(() -> { // Если категории нет, создаем её
+                            CategoryJson newCategory = new CategoryJson(
+                                    null,
+                                    spendingAnno.category(),
+                                    userAnno.username(),
+                                    false
+                            );
+                            return spendDbClient.createCategory(newCategory);
+                        });
+
 
                         SpendJson spendJson = new SpendJson(
                                 null,

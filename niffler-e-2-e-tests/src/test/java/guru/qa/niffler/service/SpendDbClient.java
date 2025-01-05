@@ -37,7 +37,8 @@ public class SpendDbClient {
         categoryDao.deleteCategory(categoryEntity);
     }
 
-    public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String categoryName) {
-        return categoryDao.findCategoryByUsernameAndCategoryName(username, categoryName);
+    public Optional<CategoryJson> findCategoryByUsernameAndCategoryName(String username, String categoryName) {
+        return categoryDao.findCategoryByUsernameAndCategoryName(username, categoryName)
+                .map(CategoryJson::fromEntity);
     }
 }

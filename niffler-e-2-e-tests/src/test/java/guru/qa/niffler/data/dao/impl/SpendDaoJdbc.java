@@ -123,6 +123,7 @@ public class SpendDaoJdbc implements SpendDao {
                      "DELETE FROM spend WHERE id = ?"
              )) {
             ps.setObject(1, spendEntity.getId());
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
