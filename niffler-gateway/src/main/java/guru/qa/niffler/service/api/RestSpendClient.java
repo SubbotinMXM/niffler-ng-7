@@ -1,13 +1,9 @@
 package guru.qa.niffler.service.api;
 
 import guru.qa.niffler.ex.NoRestResponseException;
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.DataFilterValues;
-import guru.qa.niffler.model.SpendJson;
-import guru.qa.niffler.model.StatisticJson;
-import guru.qa.niffler.model.StatisticV2Json;
+import guru.qa.niffler.model.*;
 import guru.qa.niffler.model.page.RestPage;
+import guru.qa.niffler.service.utils.HttpQueryPaginationAndSort;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +107,7 @@ public class RestSpendClient {
     return Optional.ofNullable(
         restTemplate.getForObject(
             nifflerSpendApiUri + "/v2/spends/all?username={username}&from={from}&to={to}&filterCurrency={filterCurrency}&searchQuery={searchQuery}"
-                + new HttpQueryPaginationAndSort(pageable),
+            + new HttpQueryPaginationAndSort(pageable),
             RestPage.class,
             username,
             filterPeriod != null ? dateFormat(filterDate(filterPeriod)) : null,
