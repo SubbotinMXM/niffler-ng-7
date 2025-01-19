@@ -5,13 +5,48 @@ import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UserDbClient;
 import guru.qa.niffler.util.RandomDataUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
 public class JdbcTest {
+
+    @Test
+    void springJdbcTest() {
+        UserDbClient userDbClient = new UserDbClient();
+        String username = RandomDataUtils.randomUsername();
+        String pw = "12345";
+
+        UserJson user = userDbClient.createUserSpringJdbc(
+                new UserJson(
+                        null,
+                        username,
+                        "First Name",
+                        "Surname",
+                        "Full Name",
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        new AuthUserJson(
+                                null,
+                                username,
+                                pw,
+                                true,
+                                true,
+                                true,
+                                true,
+                                null
+                        )
+                )
+        );
+
+        assertEquals(username, user.username());
+        System.out.println(user);
+    }
 
     @Test
     void txTest() {
