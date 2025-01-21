@@ -11,7 +11,41 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 public class JdbcTest {
+
+    @Test
+    void springJdbcTest() {
+        UserDbClient userDbClient = new UserDbClient();
+        String username = RandomDataUtils.randomUsername();
+        String pw = "12345";
+
+        UserJson user = userDbClient.createUserSpringJdbc(
+                new UserJson(
+                        null,
+                        username,
+                        "First Name",
+                        "Surname",
+                        "Full Name",
+                        CurrencyValues.RUB,
+                        null,
+                        null,
+                        new AuthUserJson(
+                                null,
+                                username,
+                                pw,
+                                true,
+                                true,
+                                true,
+                                true,
+                                null
+                        )
+                )
+        );
+
+        assertEquals(username, user.username());
+        System.out.println(user);
+    }
 
     @Test
     void txTest() {
@@ -100,5 +134,27 @@ public class JdbcTest {
         } finally {
             Assertions.assertFalse(userDbClient.findUserByUsername(username).isPresent());
         }
+    }
+
+    @Test
+    void springSpendJdbcTest() {
+        SpendDbClient spendDbClient = new SpendDbClient();
+
+        spendDbClient.createSpendSpringJdbc(
+                new SpendJson(
+                        null,
+                        new Date(),
+                        new CategoryJson(
+                                null,
+                                "Fast Food Test",
+                                "MAKSIM",
+                                false
+                        ),
+                        CurrencyValues.RUB,
+                        1800.0,
+                        "Fast Food description",
+                        "MAKSIM"
+                )
+        );
     }
 }

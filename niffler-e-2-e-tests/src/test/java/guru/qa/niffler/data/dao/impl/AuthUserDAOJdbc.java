@@ -1,6 +1,6 @@
 package guru.qa.niffler.data.dao.impl;
 
-import guru.qa.niffler.data.dao.AuthUserDao;
+import guru.qa.niffler.data.dao.AuthUserDAO;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,14 +9,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.UUID;
 
-public class AuthUserDaoJdbc implements AuthUserDao {
+public class AuthUserDAOJdbc implements AuthUserDAO {
 
     private static final PasswordEncoder ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final Connection connection;
 
-    public AuthUserDaoJdbc(Connection connection) {
+    public AuthUserDAOJdbc(Connection connection) {
         this.connection = connection;
     }
 
@@ -52,5 +53,10 @@ public class AuthUserDaoJdbc implements AuthUserDao {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public Optional<AuthUserEntity> findById(UUID id) {
+        return Optional.empty();
     }
 }
