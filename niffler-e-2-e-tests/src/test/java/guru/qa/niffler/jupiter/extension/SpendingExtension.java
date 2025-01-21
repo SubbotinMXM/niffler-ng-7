@@ -4,6 +4,7 @@ import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.service.CategoryDbClient;
 import guru.qa.niffler.service.SpendDbClient;
 import org.junit.jupiter.api.extension.*;
 
@@ -15,6 +16,7 @@ import static org.junit.platform.commons.support.AnnotationSupport.findAnnotatio
 public class SpendingExtension implements BeforeEachCallback, ParameterResolver {
 
     private final SpendDbClient spendDbClient = new SpendDbClient();
+    private final CategoryDbClient categoryDbClient = new CategoryDbClient();
 
 
     public static final Namespace NAMESPACE = Namespace.create(SpendingExtension.class);
@@ -27,7 +29,7 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                         Spending spendingAnno = userAnno.spendings()[0];
 
                         // Проверяем, существует ли категория
-                        CategoryJson categoryJson = spendDbClient.findCategoryByUsernameAndCategoryName(
+                        CategoryJson categoryJson = categoryDbClient.findCategoryByUsernameAndCategoryName(
                                 userAnno.username(),
                                 spendingAnno.category()
                         ).orElseGet(() -> { // Если категории нет, создаем её
@@ -37,7 +39,7 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                                     userAnno.username(),
                                     false
                             );
-                            return spendDbClient.createCategory(newCategory);
+                            return categoryDbClient.createCategory(newCategory);
                         });
 
 

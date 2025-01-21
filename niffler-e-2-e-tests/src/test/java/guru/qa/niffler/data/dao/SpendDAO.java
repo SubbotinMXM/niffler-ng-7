@@ -6,13 +6,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface SpendDao {
+public interface SpendDAO {
 
-    SpendEntity create(SpendEntity spendEntity);
+    SpendEntity createSpend(SpendEntity spendEntity);
 
     Optional<SpendEntity> findSpendById(UUID id);
 
     List<SpendEntity> findAllByUsername(String username);
 
     void deleteSpend(SpendEntity spend);
+
+    List<SpendEntity> findAll();
 }

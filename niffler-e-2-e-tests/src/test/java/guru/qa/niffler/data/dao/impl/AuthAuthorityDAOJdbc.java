@@ -1,6 +1,6 @@
 package guru.qa.niffler.data.dao.impl;
 
-import guru.qa.niffler.data.dao.AuthAuthorityDao;
+import guru.qa.niffler.data.dao.AuthAuthorityDAO;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 
 import java.sql.Connection;
@@ -9,11 +9,11 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
+public class AuthAuthorityDAOJdbc implements AuthAuthorityDAO {
 
     private final Connection connection;
 
-    public AuthAuthorityDaoJdbc(Connection connection) {
+    public AuthAuthorityDAOJdbc(Connection connection) {
         this.connection = connection;
     }
 
@@ -25,13 +25,11 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
                 "VALUES (?, ?)",
                 PreparedStatement.RETURN_GENERATED_KEYS
         )) {
-            ps.setObject(1, userAuthorities.getFirst().getUser().getId());
-            ps.setString(2, userAuthorities.getFirst().getAuthority().name());
-            ps.addBatch();
-
-            ps.setObject(1, userAuthorities.getLast().getUser().getId());
-            ps.setString(2, userAuthorities.getLast().getAuthority().name());
-            ps.addBatch();
+            for (AuthorityEntity auth : userAuthorities) {
+                ps.setObject(1, auth.getUser().getId());
+                ps.setString(2, auth.getAuthority().name());
+                ps.addBatch();
+            }
             ps.executeBatch();
         } catch (SQLException e) {
             throw new RuntimeException(e);

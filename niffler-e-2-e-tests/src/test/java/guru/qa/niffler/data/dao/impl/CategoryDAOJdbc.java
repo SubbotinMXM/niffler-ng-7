@@ -1,7 +1,6 @@
 package guru.qa.niffler.data.dao.impl;
 
-import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.dao.CategoryDao;
+import guru.qa.niffler.data.dao.CategoryDAO;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
 import java.sql.*;
@@ -10,18 +9,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class CategoryDaoJdbc implements CategoryDao {
-
-    private static final Config CFG = Config.getInstance();
+public class CategoryDAOJdbc implements CategoryDAO {
 
     private final Connection connection;
 
-    public CategoryDaoJdbc(Connection connection) {
+    public CategoryDAOJdbc(Connection connection) {
         this.connection = connection;
     }
 
     @Override
-    public CategoryEntity create(CategoryEntity category) {
+    public CategoryEntity createCategory(CategoryEntity category) {
         try (PreparedStatement ps = connection.prepareStatement(
                 "INSERT INTO category (username, name, archived) " +
                 "VALUES (?, ?, ?)",
@@ -131,6 +128,54 @@ public class CategoryDaoJdbc implements CategoryDao {
         )) {
             ps.setObject(1, category.getId());
             ps.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<CategoryEntity> findAll() {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "SELECT * FROM category"
+        )) {
+
+            List<CategoryEntity> categories = new ArrayList<>();
+
+            ps.execute();
+            try (ResultSet rs = ps.getResultSet()) {
+                while (rs.next()) {
+                    CategoryEntity ce = new CategoryEntity();
+
+                    ce.setId(rs.getObject("id", UUID.class));
+                    ce.setName(rs.getString("name"));
+                    ce.setUsername(rs.getString("username"));
+                    ce.setArchived(rs.getBoolean("archived"));
+
+                    categories.add(ce);
+                }
+            }
+            return categories;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public CategoryEntity updateCategory(CategoryEntity category) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "UPDATE category SET name = ?, username = ?, archived = ? " +
+                "WHERE id = ?"
+        )) {
+            ps.setString(1, category.getName());
+            ps.setString(2, category.getUsername());
+            ps.setBoolean(3, category.isArchived());
+            ps.setObject(4, category.getId());
+
+            ps.executeUpdate();
+
+            return category;
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

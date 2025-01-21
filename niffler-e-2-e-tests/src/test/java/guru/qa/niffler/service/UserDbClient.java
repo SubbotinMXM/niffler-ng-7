@@ -1,7 +1,6 @@
 package guru.qa.niffler.service;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.Databases.*;
 import guru.qa.niffler.data.dao.impl.*;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
@@ -31,7 +30,7 @@ public class UserDbClient {
         aue.setAccountNonExpired(true);
         aue.setCredentialsNonExpired(true);
 
-        AuthUserEntity createdAuthUser = new AuthUserDaoSpringJdbc(dataSource(CFG.authJdbcUrl()))
+        AuthUserEntity createdAuthUser = new AuthUserDAOSpringJdbc(dataSource(CFG.authJdbcUrl()))
                 .createUser(aue);
 
         AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
@@ -43,10 +42,10 @@ public class UserDbClient {
                 }
         ).toArray(AuthorityEntity[]::new);
 
-        new AuthAuthorityDaoSpringJdbc(dataSource(CFG.authJdbcUrl()))
+        new AuthAuthorityDAOSpringJdbc(dataSource(CFG.authJdbcUrl()))
                 .createAuthorities(authorityEntities);
 
-        return UserJson.fromEntity(new UserdataUserDaoSpringJdbc(dataSource(CFG.userdataJdbcUrl()))
+        return UserJson.fromEntity(new UDUserDAOSpringJdbc(dataSource(CFG.userdataJdbcUrl()))
                 .createUser(UserEntity.fromJson(user)));
     }
 
@@ -54,16 +53,16 @@ public class UserDbClient {
         XaFunction<UserJson> xaAuthF = new XaFunction<>(
                 connection -> {
                     //1 - создаем запись в табл user, niffler-auth
-                    AuthUserEntity aue = new AuthUserDaoJdbc(connection).createUser(AuthUserEntity.fromJson(userJson));
+                    AuthUserEntity aue = new AuthUserDAOJdbc(connection).createUser(AuthUserEntity.fromJson(userJson));
                     //2 - создаем 2 записи read и write в табл authorities, niffler-auth
-                    new AuthAuthorityDaoJdbc(connection).createAuthorities(aue.getAuthorities().toArray(new AuthorityEntity[0]));
+                    new AuthAuthorityDAOJdbc(connection).createAuthorities(aue.getAuthorities().toArray(new AuthorityEntity[0]));
                     return UserJson.fromAuthEntity(aue);
                 },
                 CFG.authJdbcUrl());
 
         XaFunction<UserJson> xaUserDataF = new XaFunction<>(connection -> {
             //3- создаем запись в табл user, niffler-userdata
-            UserEntity ue = new UserdataUserDaoJdbc(connection).createUser(UserEntity.fromJson(userJson));
+            UserEntity ue = new UDUserDAOJdbc(connection).createUser(UserEntity.fromJson(userJson));
             return UserJson.fromEntity(ue);
         },
                 CFG.userdataJdbcUrl());
@@ -74,7 +73,7 @@ public class UserDbClient {
     public Optional<UserEntity> findUserByUsername(String username) {
 
         return transaction(TRANSACTION_READ_UNCOMMITTED, connection -> {
-                    Optional<UserEntity> user = new UserdataUserDaoJdbc(connection)
+                    Optional<UserEntity> user = new UDUserDAOJdbc(connection)
                             .findByUsername(username);
                     return user;
                 },

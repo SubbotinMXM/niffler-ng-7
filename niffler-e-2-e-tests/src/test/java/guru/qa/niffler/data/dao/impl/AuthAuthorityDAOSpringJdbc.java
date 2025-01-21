@@ -1,6 +1,6 @@
 package guru.qa.niffler.data.dao.impl;
 
-import guru.qa.niffler.data.dao.AuthAuthorityDao;
+import guru.qa.niffler.data.dao.AuthAuthorityDAO;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,11 +9,11 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
+public class AuthAuthorityDAOSpringJdbc implements AuthAuthorityDAO {
 
     private final DataSource dataSource;
 
-    public AuthAuthorityDaoSpringJdbc(DataSource dataSource) {
+    public AuthAuthorityDAOSpringJdbc(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

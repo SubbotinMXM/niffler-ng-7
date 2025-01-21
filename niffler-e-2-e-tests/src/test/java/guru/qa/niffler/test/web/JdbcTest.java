@@ -5,14 +5,13 @@ import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UserDbClient;
 import guru.qa.niffler.util.RandomDataUtils;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled
+
 public class JdbcTest {
 
     @Test
@@ -135,5 +134,27 @@ public class JdbcTest {
         } finally {
             Assertions.assertFalse(userDbClient.findUserByUsername(username).isPresent());
         }
+    }
+
+    @Test
+    void springSpendJdbcTest() {
+        SpendDbClient spendDbClient = new SpendDbClient();
+
+        spendDbClient.createSpendSpringJdbc(
+                new SpendJson(
+                        null,
+                        new Date(),
+                        new CategoryJson(
+                                null,
+                                "Fast Food Test",
+                                "MAKSIM",
+                                false
+                        ),
+                        CurrencyValues.RUB,
+                        1800.0,
+                        "Fast Food description",
+                        "MAKSIM"
+                )
+        );
     }
 }
