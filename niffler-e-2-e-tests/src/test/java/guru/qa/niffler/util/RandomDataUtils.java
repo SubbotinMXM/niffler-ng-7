@@ -38,4 +38,8 @@ public class RandomDataUtils {
         }
         return String.join(" ", words) + ".";
     }
+
+    public static String randomPassword(int minLength, int maxLength) {
+        return faker.internet().password(minLength, maxLength);
+    }
 }
